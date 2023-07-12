@@ -52,13 +52,30 @@ function getRangeValues() {
   const workbook = viz.getWorkbook();
   const activeSheet = workbook.getActiveSheet();
   const sheets = activeSheet.getWorksheets();
+
   //inspect the sheets you need to filter
-  console.log(sheets);
-  const sheetToFilter = sheets[0];
+  //console.log(sheets);
+  //const sheetToFilter = sheets[0];
   // do the actual filtering
-  sheetToFilter
-    .applyRangeFilterAsync("SUM(Sales)", { min: minValue, max: maxValue })
-    .then(alert("Viz filtered! 🐵"));
+
+  //   sheetToFilter
+  //     .applyRangeFilterAsync("SUM(Sales)", { min: minValue, max: maxValue })
+  //     .then(alert("Viz filtered! 🐵"));
+
+  // Apply the filter to all sheets on the dashboard
+  sheets.forEach((sheet) => {
+    sheet.applyRangeFilterAsync("SUM(Sales)", { min: minValue, max: maxValue });
+  });
+  Promise.all(
+    sheets.map((sheet) =>
+      sheet.applyRangeFilterAsync("SUM(Sales)", {
+        min: minValue,
+        max: maxValue,
+      })
+    )
+  ).then(() => {
+    alert("Viz filtered! 🐵");
+  });
 }
 
 // 11. trigger function on filter button click
